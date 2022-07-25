@@ -15,7 +15,7 @@ function UserResult() {
       </div>
     )
   } else {
-    return <h3>{Spinner}</h3>
+    return <Spinner />
   }
 }
 
