@@ -15,28 +15,30 @@ export const GithubProvider = ({ children }) => {
     loading: false,
   }
   // reducer hook
-  //state = githubReducerdaki verileri taşıyacak prop
-  //dispatch = githubReducerdaki verileri setleyecek prop
-  //useReducer(githubReducer, initialState) githubReducer = main reducer
-  //useReducer(githubReducer, initialState) initialState = state değişkenleri
+  // state = githubReducerdaki verileri taşıyacak prop
+  // dispatch = githubReducerdaki verileri setleyecek prop
+  // useReducer(githubReducer, initialState) githubReducer = main reducer
+  // useReducer(githubReducer, initialState) initialState = state değişkenleri
   const [state, dispatch] = useReducer(githubReducer, initialState)
 
-  //get initial users
-  const fetchUsers = async () => {
+  // Get search results
+  const searchUsers = async (text) => {
     setLoading()
-    const response = await fetch(`${GITHUB_URL}/users`, {
+    const params = new URLSearchParams({
+      q: text,
+    })
+
+    const response = await fetch(`${GITHUB_URL}/search/users?${params}`, {
       headers: {
         Authorization: `token ${GITHUB_TOKEN}`,
       },
     })
-    const data = await response.json()
 
-    // dispatch === setUsers(data) gibi
-    // type ile reducerdaki hangi metodun çalıstırılacagı
-    // patload ile handi verinin işlenecegi belirleniyor.
+    const { items } = await response.json()
+
     dispatch({
       type: 'GET_USERS', // GithubReducer.js case 1
-      payload: data,
+      payload: items,
     })
   }
 
@@ -48,7 +50,7 @@ export const GithubProvider = ({ children }) => {
 
   return (
     <GithubContext.Provider
-      value={{ users: state.users, loading: state.loading, fetchUsers }}
+      value={{ users: state.users, loading: state.loading, searchUsers }}
     >
       {children}
     </GithubContext.Provider>
